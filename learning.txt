@@ -1,0 +1,4 @@
+1. useRef
+2. validation
+3. authentication
+4. firebase deploy
