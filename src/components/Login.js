@@ -1,12 +1,21 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { app, auth } from "../utils/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Login = () => {
   const [isSignInFrom, setIsSignInFrom] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const name = useRef(null);
   const email = useRef(null);
@@ -23,15 +32,37 @@ const Login = () => {
     );
     setErrorMessage(message);
     if (message) return;
-    
 
     if (!isSignInFrom) {
       //Sign Up Logic
-      createUserWithEmailAndPassword(auth, email?.current?.value, password?.current?.value)
+      createUserWithEmailAndPassword(
+        auth,
+        email?.current?.value,
+        password?.current?.value
+      )
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
-          console.log(user);
+          updateProfile(auth.currentUser, {
+            displayName: name?.current?.value,
+            photoURL:
+              "https://t4.ftcdn.net/jpg/02/44/43/69/360_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg",
+          })
+            .then(() => {
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+            })
+            .catch((error) => {
+              setErrorMessage(error.message);
+            });
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -40,7 +71,19 @@ const Login = () => {
         });
     } else {
       // Sign In logic
-
+      signInWithEmailAndPassword(
+        auth,
+        email?.current?.value,
+        password?.current?.value
+      )
+        .then((userCredential) => {
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
     }
   };
   return (

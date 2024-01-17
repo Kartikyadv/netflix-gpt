@@ -2,3 +2,6 @@
 2. validation
 3. authentication
 4. firebase deploy
+5. login & signup through firebase
+6. redux
+7.
