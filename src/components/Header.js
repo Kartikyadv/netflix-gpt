@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
 import { LOGO, USER_LOGO } from "../utils/constants";
-import { removeNowPlayingMovies, removeTrailerVideo } from "../utils/moviesSlice";
+import { removeMovies } from "../utils/moviesSlice";
 
 const Header = () => {
   const user = useSelector((store) => store.user);
@@ -20,8 +20,7 @@ const Header = () => {
           navigate("/browse");
         } else {
           dispatch(removeUser());
-          dispatch(removeNowPlayingMovies());
-          dispatch(removeTrailerVideo());
+          dispatch(removeMovies());
           navigate("/");
         }
       });
