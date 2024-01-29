@@ -4,7 +4,7 @@
 4. firebase deploy
 5. login & signup through firebase
 6. redux
-7.
+7. promise.all - when a map f(x) is called and if it contains await in it , it will return promises to resolve it we use promise.all
 
 Create React App
 Configured TailwindCSS
